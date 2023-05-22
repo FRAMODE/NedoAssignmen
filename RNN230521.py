@@ -64,7 +64,7 @@ criterion = nn.MSELoss()
 optimizer = optim.SGD(net.parameters(), lr=conflr)
 
 net.train()
-num_epoch = 200
+num_epoch = 1000
 
 loss_record = []
 
@@ -94,9 +94,10 @@ for epoch in range(num_epoch):
 
             loss_sum += loss
 
-            loss.backward(retain_graph=True)
+        loss_sum /= len(inputs[0,0])
+        loss_sum.backward()
 
-            optimizer.step()
+        optimizer.step()
 
     print(f"Epoch: {epoch+1}/{num_epoch}, Loss: {loss_sum.item() / len(train_dataloader)}")
 
@@ -119,19 +120,24 @@ model = torch.load('model_weight.pth')
 
 predict = np.zeros((len(datatrain[0][0]), 2))
 print(predict.shape)
-input_mat = torch.tensor([4.,0.])
-input_mat = input_mat.unsqueeze(0)
+input_mat = torch.tensor([4.,2.])
+#input_mat = input_mat.unsqueeze(0)
+print(datatrain[0,0,1])
 
 for i in range (len(datatrain[0][0])):
     
     #print(input_mat.shape)
-    print(datatrain[0][0].shape)
-    #output = model(input_mat)
-    output = model(datatrain[0,0,i])
+    #print(f"aaaaaaaa {datatrain[0][0].shape}")
+    output = model(input_mat)
+    #print(input_mat.shape)
+    #output = model(datatrain[0,0,i])
+    
+    #print(datatrain[0][0][i].shape)
+    #print(output.shape)
 
    
     predict[i] = output.detach().numpy()
-    print(output.shape)
+    #print(output.shape)
 
     input_mat = output
 
@@ -143,9 +149,9 @@ predict = predict.T
 print(predict.shape)
 
 
-plt.plot(predict[0],predict[1],marker = '.')
-plt.xlim(-4,4)
-plt.ylim(-4,4)
+plt.plot(predict[0][200:250],predict[1][200:250],marker = '.')
+plt.xlim(0,4)
+plt.ylim(0,4)
 plt.yscale('linear')
 plt.savefig(f"RNNfig/datarand0001_predict_{confnumhidden}_{confoptim}_{conflr}_{confact}_tanh.png")
 plt.show()
