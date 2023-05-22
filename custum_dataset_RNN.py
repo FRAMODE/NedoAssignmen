@@ -8,17 +8,22 @@ from IPython import embed
 class Datadata(torch.utils.data.Dataset):
     def __init__(self):
         cir_list = []
-        angle = np.linspace(0, 2*np.pi,50)
-        num = np.linspace(0, 49, 50)
-        cos_x = np.cos(angle) 
-        sin_y = np.sin(angle) 
+        cycle = 5
+        ten = 50
+       
+        angle = np.linspace(0, (cycle * ten -1)/(cycle * ten)*cycle*2*np.pi,cycle * ten)
+        #angl = np.linspace(0, 149,150)
+
+        #num = np.linspace(-50, 99, 150)
+        cos_x = 2 * np.cos(angle) + 2.
+        sin_y = 2 * np.sin(angle) + 2.
+
         points = np.array([cos_x, sin_y]).T
-        points = np.array([points[:49],points[1:]])
-        # train_points = np.array([points[0][:49],points[1][:49]])
-        # train_points = train_points.T
-        # train_points = 
-        # target_points = np.array([points[0][1:],points[1][1:]])
-        # points = np.array([train_points, target_points])
+        xx = points
+        yy = np.concatenate([points[1:], points[:1]])
+
+        points = np.array([xx,yy])
+
         points = torch.tensor(points, dtype=torch.float32)
         
         cir_list.append(points)
